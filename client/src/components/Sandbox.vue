@@ -4,7 +4,9 @@
             v-for="(hoop,i) in hoopLocations" 
             :key="'hoop-' + i" 
             class='hoop'
-            :style="{top:hoop[1] + 'px', left:hoop[0] + 'px'}">{{hoop[1]}}</div>
+            :style="{top:hoop[1] + 'px', left:hoop[0] + 'px'}">{{hoop[1]}}
+        </div>
+        <div class='rocket'></div>
     </div>
  </template>
 
@@ -32,11 +34,17 @@
              })
              this.$forceUpdate()
              setTimeout(this.moveHoops, 50)
+         },
+         moveRocket: function (keycode) {
+             console.log(keycode)
          }
      },
      created () {
          this.createHoops()
          this.moveHoops()
+         window.addEventListener('keyup', e => {
+             this.moveRocket(e.code)
+         })
      }
  }
  </script>
