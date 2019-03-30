@@ -28,7 +28,7 @@
      },
      methods: {
          createHoops: function () {
-             const xLoc = Math.floor(Math.random() * window.innerWidth)
+             const xLoc = Math.floor(Math.random() * window.innerWidth / 2)
              this.hoopLocations.push([xLoc, 0])
              setTimeout(this.createHoops, 4000)
          },
