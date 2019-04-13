@@ -20,43 +20,96 @@
  export default {
      name: 'Sandbox',
      data: function () {
-         return {
-             rocketLocation: [0,window.innerHeight/2],
-             hoopLocations: [],
-             points: 0
-         }
+        return {
+            rocketLocation: [0,window.innerHeight/2],
+            isMovingRight: false,
+            isMovingLeft: false,
+            isMovingUp: false,
+            isMovingDown: false,
+            hoopLocations: [],
+            points: 0
+        }
      },
      methods: {
-         createHoops: function () {
-             const xLoc = Math.floor(Math.random() * window.innerWidth / 2)
-             this.hoopLocations.push([xLoc, 0])
-             setTimeout(this.createHoops, 4000)
-         },
-         moveHoops: function () {
-             this.hoopLocations.forEach((e,i) => {
-                 this.hoopLocations[i][1] = this.hoopLocations[i][1] + 5
-                 const xLoc = this.rocketLocation[0] - this.hoopLocations[i][0]
-                 console.log(xLoc)
-                 if(Math.abs(this.hoopLocations[i][1] - this.rocketLocation[1]) < 20 && (xLoc < 200 && xLoc > 0)){ this.points = this.points + 1}
-                 if(e[1] > window.innerHeight - 10) {
-                     this.hoopLocations.splice(i,1)
-                 }
-             })
-             this.$forceUpdate()
-             setTimeout(this.moveHoops, 50)
-         },
-         moveRocket: function (keycode) {
-             console.log(keycode)
-             if(keycode == 'ArrowLeft' && this.rocketLocation[0] > 0){ this.rocketLocation[0] = this.rocketLocation[0] - 30 }
-             if(keycode == 'ArrowRight' && this.rocketLocation[0] < window.innerWidth - 10){ this.rocketLocation[0] = this.rocketLocation[0] + 30 }
-         }
+        createHoops: function () {
+            const xLoc = Math.floor(Math.random() * window.innerWidth / 2)
+            this.hoopLocations.push([xLoc, 0])
+            setTimeout(this.createHoops, 4000)
+        },
+        moveHoops: function () {
+            this.hoopLocations.forEach((e,i) => {
+                this.hoopLocations[i][1] = this.hoopLocations[i][1] + 5
+                const xLoc = this.rocketLocation[0] - this.hoopLocations[i][0]
+
+                if (Math.abs(this.hoopLocations[i][1] - this.rocketLocation[1]) < 20 && (xLoc < 200 && xLoc > 0)) { 
+                    this.points = this.points + 1
+                } else if (e[1] > window.innerHeight - 10) {
+                    this.hoopLocations.splice(i,1);
+                }
+            })
+            this.$forceUpdate();
+            setTimeout(this.moveHoops, 50);
+        },
+        keyDown: function (e) {
+            const keycode = e.code;
+
+            if (keycode == 'ArrowLeft') { 
+                this.isMovingLeft = true;
+                this.moveLeft();
+            } else if (keycode == 'ArrowRight') { 
+                this.isMovingRight = true;
+                this.moveRight();
+            } else if (keycode == 'ArrowDown') {
+                this.isMovingDown = true;
+                this.moveDown();
+            } else if (keycode == 'ArrowUp') {
+                this.isMovingUp = true;
+                this.moveUp();
+            }
+        },
+        keyUp: function (e) {
+            const keycode = e.code;
+
+            if (keycode == 'ArrowLeft') { 
+                this.isMovingLeft = false;
+            } else if (keycode == 'ArrowRight') { 
+                this.isMovingRight = false;
+            } else if (keycode == 'ArrowDown') {
+                this.isMovingDown = false;
+            } else if (keycode == 'ArrowUp') {
+                this.isMovingUp = false;
+            }
+        },
+        moveRight: function (e) {
+            if (this.rocketLocation[0] + 60 < window.innerWidth) {
+                this.rocketLocation[0] = this.rocketLocation[0] + 30;
+                this.isMovingRight ? setTimeout(this.moveRight, 50) : null;
+            }
+        },
+        moveLeft: function (e) {
+            if (this.rocketLocation[0] - 60 > 0) {
+               this.rocketLocation[0] = this.rocketLocation[0] - 30;
+                this.isMovingLeft ? setTimeout(this.moveLeft, 50) : null;
+            }
+        },
+        moveDown: function (e) {
+            if (this.rocketLocation[1] + 160 < window.innerHeight) {
+                this.rocketLocation[1] = this.rocketLocation[1] + 30;
+                this.isMovingDown ? setTimeout(this.moveDown, 50) : null;
+            }
+        },
+        moveUp: function (e) {
+            if (this.rocketLocation[1] - 60 > 0) {
+                this.rocketLocation[1] = this.rocketLocation[1] - 30;
+                this.isMovingUp ? setTimeout(this.moveUp, 50) : null;
+            }
+        },
      },
      created () {
-         this.createHoops()
-         this.moveHoops()
-         window.addEventListener('keyup', e => {
-             this.moveRocket(e.code)
-         })
+        this.createHoops()
+        this.moveHoops()
+        window.addEventListener('keydown', this.keyDown)
+        window.addEventListener('keyup', this.keyUp)
      }
  }
  </script>
