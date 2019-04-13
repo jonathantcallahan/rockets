@@ -1,7 +1,7 @@
  <template>
     <div class='game-container'>
-        <div v-if='newGame === true'>
-            <button class='start-game-button' v-on:click='newGame = false'>Start Game</button>
+        <div v-if='this.newGame === true'>
+            <button class='start-game-button' v-on:click='this.createGame'>Start Game</button>
         </div>
         <div v-else>
             <div class='score-container'>
@@ -33,6 +33,7 @@
             isMovingUp: false,
             isMovingDown: false,
             hoopLocations: [],
+            flightMatrix: [],
             points: 0
         }
      },
@@ -114,13 +115,33 @@
             }
         },
         closeGame: function(e) {
+            this.postResults(this.points, this.flightMatrix);
             this.points = 0
             this.flightMatrix = []
+        },
+        flightTracker: function() {
+            if (!this.newGame) {
+                this.flightMatrix.push({x: this.rocketLocation[0], y: this.rocketLocation[1]})
+                setTimeout(this.flightTracker, 50);
+            }
+        },
+        createGame: function() {
+            this.newGame = false;
+
+            this.points = 0;
+            this.flightMatrix = [];
+            this.rocketLocation = [window.innerWidth / 2, window.innerHeight / 2];
+
+            this.flightTracker()
+            this.createHoops()
+            this.moveHoops()
+        },
+        postResults: function(points, flight_payload) {
+            console.log('Success, total points: ', points);
+            console.log('Flight Data: ', flight_payload);
         }
      },
      created () {
-        this.createHoops()
-        this.moveHoops()
         window.addEventListener('keydown', this.keyDown)
         window.addEventListener('keyup', this.keyUp)
      }
