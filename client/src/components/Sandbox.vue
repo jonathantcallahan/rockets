@@ -1,17 +1,22 @@
  <template>
     <div class='game-container'>
-        <div class='score-container'>
-            <div class='points'>{{this.points}}</div>
+        <div v-if='newGame === true'>
+            <button class='start-game-button' v-on:click='newGame = false'>Start Game</button>
         </div>
-        <div 
-            v-for="(hoop,i) in hoopLocations" 
-            :key="'hoop-' + i" 
-            class='hoop'
-            :style="{top:hoop[1] + 'px', left:hoop[0] + 'px'}">{{hoop[1]}}
-        </div>
-        <div 
-            class='rocket'
-            :style="{ top:rocketLocation[1] + 'px', left:rocketLocation[0] + 'px' }">
+        <div v-else>
+            <div class='score-container'>
+                <div class='points'>{{this.points}}</div>
+            </div>
+            <div 
+                v-for="(hoop,i) in hoopLocations" 
+                :key="'hoop-' + i" 
+                class='hoop'
+                :style="{top:hoop[1] + 'px', left:hoop[0] + 'px'}">{{hoop[1]}}
+            </div>
+            <div 
+                class='rocket'
+                :style="{ top:rocketLocation[1] + 'px', left:rocketLocation[0] + 'px' }">
+            </div>
         </div>
     </div>
  </template>
@@ -21,6 +26,7 @@
      name: 'Sandbox',
      data: function () {
         return {
+            newGame: true,
             rocketLocation: [0,window.innerHeight/2],
             isMovingRight: false,
             isMovingLeft: false,
@@ -78,6 +84,9 @@
                 this.isMovingDown = false;
             } else if (keycode == 'ArrowUp') {
                 this.isMovingUp = false;
+            } else if (e.which == 27) {
+                this.newGame = true;
+                this.closeGame();
             }
         },
         moveRight: function (e) {
@@ -104,6 +113,10 @@
                 this.isMovingUp ? setTimeout(this.moveUp, 50) : null;
             }
         },
+        closeGame: function(e) {
+            this.points = 0
+            this.flightMatrix = []
+        }
      },
      created () {
         this.createHoops()
@@ -122,6 +135,12 @@
      position: relative
  }
 
+ .start-game-button {
+     position: absolute;
+     left: 50%;
+     top: 50%;
+     transform: translate(-50%, -50%);
+ }
  .hoop {
      width: 200px;
      height: 5px;
