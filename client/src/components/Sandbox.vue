@@ -15,7 +15,7 @@
             </div>
             <div 
                 class='rocket'
-                :style="{ top:rocketLocation[1] + 'px', left:rocketLocation[0] + 'px' }">
+                :style="{ top:rocketLocation[1] + 'px', left:rocketLocation[0] + 'px', transform:'rotate(' + rocketLocation[2] + 'Deg)' }">
             </div>
         </div>
     </div>
@@ -27,7 +27,7 @@
      data: function () {
         return {
             newGame: true,
-            rocketLocation: [0,window.innerHeight/2],
+            rocketLocation: [0,window.innerHeight/2, 0],
             isMovingRight: false,
             isMovingLeft: false,
             isMovingUp: false,
@@ -79,7 +79,7 @@
 
             if (keycode == 'ArrowLeft') { 
                 this.isMovingLeft = false;
-            } else if (keycode == 'ArrowRight') { 
+            } else if (keycode == 'ArrowRight') {
                 this.isMovingRight = false;
             } else if (keycode == 'ArrowDown') {
                 this.isMovingDown = false;
@@ -90,25 +90,38 @@
                 this.closeGame();
             }
         },
+        setRocketAngle: function () {
+            const rocketAngle = this.rocketLocation[2]
+            this.rocketLocation[2] = this.rocketLocation[2] > 0 ? rocketAngle - 1 : rocketAngle + 1
+            if(Math.abs(rocketAngle) > 1){
+                setTimeout(this.setRocketAngle, 50)
+            }  
+        },
         moveRight: function (e) {
             if (this.rocketLocation[0] + 60 < window.innerWidth) {
                 this.rocketLocation[0] = this.rocketLocation[0] + 30;
+                this.rocketLocation[2] = 10
+                this.setRocketAngle()
                 this.isMovingRight ? setTimeout(this.moveRight, 50) : null;
             }
         },
         moveLeft: function (e) {
             if (this.rocketLocation[0] - 60 > 0) {
                this.rocketLocation[0] = this.rocketLocation[0] - 30;
+               this.rocketLocation[2] = -10
+               this.setRocketAngle()
                 this.isMovingLeft ? setTimeout(this.moveLeft, 50) : null;
             }
         },
         moveDown: function (e) {
+            return
             if (this.rocketLocation[1] + 160 < window.innerHeight) {
                 this.rocketLocation[1] = this.rocketLocation[1] + 30;
                 this.isMovingDown ? setTimeout(this.moveDown, 50) : null;
             }
         },
         moveUp: function (e) {
+            return
             if (this.rocketLocation[1] - 60 > 0) {
                 this.rocketLocation[1] = this.rocketLocation[1] - 30;
                 this.isMovingUp ? setTimeout(this.moveUp, 50) : null;
