@@ -11,7 +11,7 @@
                 v-for="(hoop,i) in hoopLocations" 
                 :key="'hoop-' + i" 
                 class='hoop'
-                :style="{top:hoop[1] + 'px', left:hoop[0] + 'px'}">{{hoop[1]}}
+                :style="{top:hoop[1] + 'px', left:hoop[0] + 'px'}">
             </div>
             <div 
                 class='rocket'
@@ -97,20 +97,25 @@
                 setTimeout(this.setRocketAngle, 50)
             }  
         },
-        moveRight: function (e) {
+        moveRight: function (e, a) {
+            a = a || 10
+            console.log(a)
             if (this.rocketLocation[0] + 60 < window.innerWidth) {
-                this.rocketLocation[0] = this.rocketLocation[0] + 30;
-                this.rocketLocation[2] = 10
+                this.rocketLocation[0] = this.rocketLocation[0] + 20;
+                this.rocketLocation[2] = a
                 this.setRocketAngle()
-                this.isMovingRight ? setTimeout(this.moveRight, 50) : null;
+                a = a >= 30 ? 30 : a + 1
+                this.isMovingRight ? setTimeout(this.moveRight.bind(null,e, a), 50) : null;
             }
         },
-        moveLeft: function (e) {
+        moveLeft: function (e, a) {
+            a = a || -10
             if (this.rocketLocation[0] - 60 > 0) {
-               this.rocketLocation[0] = this.rocketLocation[0] - 30;
-               this.rocketLocation[2] = -10
+               this.rocketLocation[0] = this.rocketLocation[0] - 20;
+               this.rocketLocation[2] = a
+               a = a <= -30 ? -30 : a - 1
                this.setRocketAngle()
-                this.isMovingLeft ? setTimeout(this.moveLeft, 50) : null;
+                this.isMovingLeft ? setTimeout(this.moveLeft.bind(null, e, a), 50) : null;
             }
         },
         moveDown: function (e) {
