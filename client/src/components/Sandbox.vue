@@ -11,19 +11,26 @@
                 v-for="(hoop,i) in hoopLocations" 
                 :key="'hoop-' + i" 
                 class='hoop'
-                :style="{top:hoop[1] + 'px', left:hoop[0] + 'px'}">
+                :style="{top:hoop[1] + 'px', left:hoop[0] + 'px', 'background-color': hoop[2] ? 'green' : 'black'}">
             </div>
             <div 
                 class='rocket'
                 :style="{ top:rocketLocation[1] + 'px', left:rocketLocation[0] + 'px', transform:'rotate(' + rocketLocation[2] + 'Deg)' }">
             </div>
         </div>
+        <Chart></Chart>
     </div>
  </template>
 
  <script>
+
+import Chart from './Charts'
+
  export default {
      name: 'Sandbox',
+     components: {
+         Chart
+     },
      data: function () {
         return {
             newGame: true,
@@ -40,7 +47,7 @@
      methods: {
         createHoops: function () {
             const xLoc = Math.floor(Math.random() * window.innerWidth / 2)
-            this.hoopLocations.push([xLoc, 0])
+            this.hoopLocations.push([xLoc, 0, false])
             setTimeout(this.createHoops, 4000)
         },
         moveHoops: function () {
@@ -50,6 +57,7 @@
 
                 if (Math.abs(this.hoopLocations[i][1] - this.rocketLocation[1]) < 20 && (xLoc < 200 && xLoc > 0)) { 
                     this.points = this.points + 1
+                    this.hoopLocations[i][2] = true
                 } else if (e[1] > window.innerHeight - 10) {
                     this.hoopLocations.splice(i,1);
                 }
