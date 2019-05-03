@@ -1,24 +1,29 @@
- <template>
-    <div class='game-container'>
-        <div v-if='this.newGame === true'>
-            <button class='start-game-button' v-on:click='this.createGame'>Start Game</button>
+ <template> 
+    <div>
+        <div class='chart-container'>
+            <Chart :flightPoints=points :flightHoops=missedHoops></Chart>
         </div>
-        <div v-else>
-            <div class='score-container'>
-                <div class='points'>{{this.points}}</div>
+        <div class='game-container'>
+            <div v-if='this.newGame === true'>
+                <button class='start-game-button' v-on:click='this.createGame'>Start Game</button>
             </div>
-            <div 
-                v-for="(hoop,i) in hoopLocations" 
-                :key="'hoop-' + i" 
-                class='hoop'
-                :style="{top:hoop[1] + 'px', left:hoop[0] + 'px', 'background-color': hoop[2] ? 'green' : 'black'}">
+            <div v-else>
+                <div class='score-container'>
+                    <div class='points'>{{this.points}}</div>
+                </div>
+                <div 
+                    v-for="(hoop,i) in hoopLocations" 
+                    :key="'hoop-' + i" 
+                    class='hoop'
+                    :style="{top:hoop[1] + 'px', left:hoop[0] + 'px', 'background-color': hoop[2] ? 'green' : 'black'}">
+                </div>
+                <div 
+                    class='rocket'
+                    :style="{ top:rocketLocation[1] + 'px', left:rocketLocation[0] + 'px', transform:'rotate(' + rocketLocation[2] + 'Deg)' }">
+                </div>
             </div>
-            <div 
-                class='rocket'
-                :style="{ top:rocketLocation[1] + 'px', left:rocketLocation[0] + 'px', transform:'rotate(' + rocketLocation[2] + 'Deg)' }">
-            </div>
+            <Chart></Chart>
         </div>
-        <Chart></Chart>
     </div>
  </template>
 
@@ -41,13 +46,14 @@ import Chart from './Charts'
             isMovingDown: false,
             hoopLocations: [],
             flightMatrix: [],
-            points: 0
+            points: 0,
+            missedHoops: 0
         }
      },
      methods: {
         createHoops: function () {
             const xLoc = Math.floor(Math.random() * window.innerWidth / 2)
-            this.hoopLocations.push([xLoc, 0, false])
+            this.hoopLocations.push([xLoc, 0, false]) // [xlocation, ylocation, scored]
             setTimeout(this.createHoops, 4000)
         },
         moveHoops: function () {
@@ -55,10 +61,11 @@ import Chart from './Charts'
                 this.hoopLocations[i][1] = this.hoopLocations[i][1] + 5
                 const xLoc = this.rocketLocation[0] - this.hoopLocations[i][0]
 
-                if (Math.abs(this.hoopLocations[i][1] - this.rocketLocation[1]) < 20 && (xLoc < 200 && xLoc > 0)) { 
+                if (Math.abs(this.hoopLocations[i][1] - this.rocketLocation[1]) < 20 && (xLoc < 200 && xLoc > 0) && !this.hoopLocations[i][2]) { 
                     this.points = this.points + 1
                     this.hoopLocations[i][2] = true
                 } else if (e[1] > window.innerHeight - 10) {
+                    if(!this.hoopLocations[i][2]){ this.missedHoops = this.missedHoops + 1 }
                     this.hoopLocations.splice(i,1);
                 }
             })
@@ -175,11 +182,17 @@ import Chart from './Charts'
  </script>
 
  <style>
+ .chart-container {
+     width: 19vw;
+     display: inline-block
+ }
  .game-container {
-     width: 100vw;
+     width: 80vw;
      height: 100vh;
      background-color: gray;
-     position: relative
+     position: relative;
+     display: inline-block;
+     vertical-align: top
  }
 
  .start-game-button {
