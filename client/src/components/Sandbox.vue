@@ -1,7 +1,7 @@
  <template> 
     <div>
         <div class='chart-container'>
-            <Chart :flightPoints=points :flightHoops=missedHoops></Chart>
+            <Chart :chartdata='chartData' :options='chartOptions'></Chart>
         </div>
         <div class='game-container'>
             <div v-if='this.newGame === true'>
@@ -47,7 +47,22 @@ import Chart from './Charts'
             hoopLocations: [],
             flightMatrix: [],
             points: 0,
-            missedHoops: 0
+            missedHoops: 0,
+            chartData: {
+                datacollection: {
+                    labels: ['points', 'missed'],
+                    datasets: [
+                        {
+                            label: 'data',
+                            data: [this.points, this.missedHoops]
+                        }
+                    ]
+                }
+            },
+            chartOptions: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
         }
      },
      methods: {
